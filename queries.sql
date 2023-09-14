@@ -70,3 +70,20 @@ join products as p on p.product_id = s.product_id
 group by to_char(s.sale_date,'YYYY-MM')
 order by to_char(s.sale_date,'YYYY-MM');
 
+with step6_report_3 as (
+select concat(c.first_name, ' ', c.last_name ) as customer, s.sale_date,
+concat(e.first_name,' ',e.last_name) as seller,
+price, quantity, s.customer_id,
+row_number () over (partition by s.customer_id order by sale_date) as row_numb
+from sales as s
+inner join customers as c on c.customer_id  = s.customer_id 
+inner join employees e on e.employee_id = s.sales_person_id 
+inner join products as p on p.product_id = s.product_id  
+group by c.first_name, c.last_name, e.first_name, e.last_name, sale_date, s.customer_id, price, quantity
+order by s.customer_id
+)
+select customer, sale_date, seller
+from step6_report_3
+where row_numb = 1 and price = '0'
+order by customer_id;
+
