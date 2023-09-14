@@ -64,4 +64,9 @@ from step6_report_1
 group by age_category
 order by age_category;
 
+select to_char(s.sale_date,'YYYY-MM') as date, count(distinct s.customer_id) as total_customers, round(sum (s.quantity * p.price), 0) as income 
+from sales as s
+join products as p on p.product_id = s.product_id 
+group by to_char(s.sale_date,'YYYY-MM')
+order by to_char(s.sale_date,'YYYY-MM');
 
