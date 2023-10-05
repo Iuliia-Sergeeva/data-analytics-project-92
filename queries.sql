@@ -49,21 +49,14 @@ from report_3
 group by name, weekday_id, weekday
 order by weekday_id, name;
 
-with step6_report_1 as (
-select s.customer_id, c.age, 
+select 
 case
 	when age > 15 and age < 26 then '16-25'
 	when age > 25 and age < 41 then '26-40'
 	else '40+'
-end as age_category
-from sales as s
-join customers as c on c.customer_id = s.customer_id
-group by age, s.customer_id
-)
-select age_category, count (customer_id)
-from step6_report_1
+end as age_category, count(distinct c.customer_id) as count
+from customers c
 group by age_category
-order by age_category;
 
 select to_char(s.sale_date,'YYYY-MM') as date, count(distinct s.customer_id) as total_customers, round(sum (s.quantity * p.price), 0) as income 
 from sales as s
