@@ -19,16 +19,17 @@ limit 10;
 with report_2 as (
 select 
 concat(e.first_name,' ',e.last_name) as name,
-FLOOR (sum (s.quantity * p.price)) as revenue,
-FLOOR (avg (s.quantity * p.price)) as average_income
+round(sum (s.quantity * p.price)) as revenue,
+count(quantity) as count_quantity,
+round(avg (s.quantity * p.price)) as average_income
 from employees as e
 left join sales as s on s.sales_person_id = e.employee_id
 left join products as p on p.product_id  = s.product_id
-group by e.first_name,e.last_name
+group by e.first_name,e.last_name, sales_person_id
 )
-select name, average_income
+select name, round (avg (average_income),0) as average_income
 from report_2
-where average_income < (select avg(revenue) from tab)
+where average_income < (select FLOOR (avg (s.quantity * p.price)) from sales s join products p on p.product_id = s.product_id)
 group by name, average_income
 order by average_income asc;
 
