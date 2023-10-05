@@ -38,16 +38,16 @@ select
 concat(e.first_name,' ',e.last_name) as name, 
 to_char(s.sale_date, 'day') as weekday,
 to_char(s.sale_date, 'id') as weekday_id,
-round(sum (s.quantity * p.price),0) as income
+sum (s.quantity * p.price) as income
 from employees as e
 join sales as s on s.sales_person_id = e.employee_id
 join products as p on p.product_id  = s.product_id
 group by e.first_name, e.last_name, s.sale_date
 )
-select name, weekday, sum (income)
+select name, weekday, round (sum (income),0) as income
 from report_3
 group by name, weekday_id, weekday
-order by name, weekday_id;
+order by weekday_id, name;
 
 with step6_report_1 as (
 select s.customer_id, c.age, 
