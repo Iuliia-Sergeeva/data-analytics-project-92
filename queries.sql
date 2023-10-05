@@ -58,7 +58,8 @@ end as age_category, count(distinct c.customer_id) as count
 from customers c
 group by age_category
 
-select to_char(s.sale_date,'YYYY-MM') as date, count(distinct s.customer_id) as total_customers, round(sum (s.quantity * p.price), 0) as income 
+select to_char(s.sale_date,'YYYY-MM') as date, count(distinct s.customer_id) as total_customers,
+FLOOR(sum (s.quantity * p.price)) as income 
 from sales as s
 join products as p on p.product_id = s.product_id 
 group by to_char(s.sale_date,'YYYY-MM')
