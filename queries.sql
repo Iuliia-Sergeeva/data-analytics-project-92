@@ -1,9 +1,11 @@
+ --Работа с базой данных 4 шаг --1 задача
 select count(customer_id) as customers_count
 from customers;
 
+--Анализ отдела продаж 5 шаг --1 задача
 with report_1 as (
 select 
-concat(e.first_name,' ',e.last_name) as name,
+e.first_name ||' ' || e.last_name as name,
 count (s.quantity) as operations,
 FLOOR (sum (s.quantity * p.price)) as income
 from employees as e
@@ -13,9 +15,10 @@ group by e.first_name,e.last_name
 )
 select *
 from report_1
-order by income desc nulls last
+order by 3 desc nulls last
 limit 10;
 
+--Анализ отдела продаж 5 шаг --2 задача
 with report_2 as (
 select 
 concat(e.first_name,' ',e.last_name) as name,
@@ -29,10 +32,11 @@ group by e.first_name,e.last_name, sales_person_id
 )
 select name, round (avg (average_income),0) as average_income
 from report_2
-where average_income < (select FLOOR (avg (s.quantity * p.price)) from sales s join products p on p.product_id = s.product_id)
 group by name, average_income
+having average_income < (select FLOOR (avg (s.quantity * p.price)) from sales s join products p on p.product_id = s.product_id)
 order by average_income asc;
 
+--Анализ отдела продаж 5 шаг --3 задача
 with report_3 as (
 select 
 concat(e.first_name,' ',e.last_name) as name, 
@@ -49,6 +53,7 @@ from report_3
 group by name, weekday_id, weekday
 order by weekday_id, name;
 
+--Анализ покупателей 6 шаг --1 задача
 select 
 case
 	when age > 15 and age < 26 then '16-25'
@@ -58,6 +63,7 @@ end as age_category, count(distinct c.customer_id) as count
 from customers c
 group by age_category
 
+--Анализ покупателей 6 шаг --2 задача
 select to_char(s.sale_date,'YYYY-MM') as date, count(distinct s.customer_id) as total_customers,
 FLOOR(sum (s.quantity * p.price)) as income 
 from sales as s
@@ -65,6 +71,7 @@ join products as p on p.product_id = s.product_id
 group by to_char(s.sale_date,'YYYY-MM')
 order by to_char(s.sale_date,'YYYY-MM');
 
+--Анализ покупателей 6 шаг --3 задача
 with step6_report_3 as (
 select concat(c.first_name, ' ', c.last_name ) as customer, s.sale_date,
 concat(e.first_name,' ',e.last_name) as seller,
